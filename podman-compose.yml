@@ -1,0 +1,32 @@
+# podman-compose.yml
+version: "3.8"
+
+services:
+    # Base de Datos SQL Server 2022
+    sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        container_name: coppel_sql_server
+        hostname: sqlserver
+        restart: always
+        environment:
+            # Aceptación de la Licencia
+            - ACCEPT_EULA=Y
+            # Contraseña de usuario SA
+            - SA_PASSWORD=Coppel2024_Test!
+            - MSSQL_PID=Express
+        ports:
+            # Mapeo del puerto SQL estándar
+            - "1433:1433"
+        volumes:
+            # Persistencia de datos en el sistema anfitrión
+            - sql_data:/var/opt/mssql
+
+        networks:
+            - spring-net
+
+networks:
+    spring-net:
+        driver: bridge
+
+volumes:
+    sql_data:
