@@ -1,6 +1,7 @@
 package com.coppel.services.impl;
 
 import com.coppel.dto.PolizaRequestDTO;
+import com.coppel.dto.PolizaUpdateRequestDTO;
 import com.coppel.entities.Empleado;
 import com.coppel.entities.Inventario;
 import com.coppel.entities.Poliza;
@@ -87,4 +88,76 @@ public class PolizaServiceImpl implements PolizaService {
     public List<Poliza> findAll() {
         return polizaRepository.findAll();
     }
+
+    @Override
+    public Poliza actualizarPoliza(Integer idPoliza, PolizaUpdateRequestDTO polizaRequest) {
+
+        // Encontrar la póliza existente
+        Poliza polizaExistente = polizaRepository.findById(idPoliza)
+                .orElseThrow(() -> new RuntimeException("Poliza no encontrada con el ID: " + idPoliza));
+
+        // Guardar los datos originales para la lógica de inventario.
+        Inventario inventarioDeArticulo = polizaExistente.getInventario(); // Guardar inventario actual
+        int cantidadActualPoliza = polizaExistente.getCantidad(); // Guardar cantidad actual de poliza
+
+        // Validar los nuevos datos que llegan en la
+        // petición-------------------------------------------
+
+        // Validar empleado de peticion
+        Empleado nuevoEmpleado = empleadoRepository.findById(polizaRequest.getIdEmpleado())
+                .orElseThrow(
+                        () -> new RuntimeException("Empleado no encontrado con ID: " + polizaRequest.getIdEmpleado()));
+
+        // Validar articulo de peticion
+        Inventario nuevoInventarioArticulo = inventarioRepository.findById(polizaRequest.getSku())
+                .orElseThrow(() -> new RuntimeException(
+                        "Artículo de inventario no encontrado con SKU: " + polizaRequest.getSku()));
+
+        // Validar cantidad de peticion
+        int nuevaCantidad = polizaRequest.getCantidad();
+        if (nuevaCantidad <= 0) {
+            throw new RuntimeException("La cantidad en la póliza debe ser mayor a cero");
+        }
+
+        // Lógica de ajuste de
+        // inventario---------------------------------------------------------------------------
+
+        boolean skuHaCambiado = !inventarioDeArticulo.getSku().equals(nuevoInventarioArticulo.getSku());
+
+        if (skuHaCambiado) {
+            // Si el artículo cambia regresamos la cantidad actual de la poliza a inventario
+            // del articulo
+            inventarioDeArticulo.setCantidad(inventarioDeArticulo.getCantidad() + cantidadActualPoliza);
+
+            if (nuevoInventarioArticulo.getCantidad() < nuevaCantidad) {
+                throw new RuntimeException(
+                        "Inventario insuficiente para el nuevo artículo: " + nuevoInventarioArticulo.getNombre());
+            }
+            nuevoInventarioArticulo.setCantidad(nuevoInventarioArticulo.getCantidad() - nuevaCantidad);
+
+        } else { // Si el SKU es el mismo, solo cambia la cantidad o el empleado.
+            int diferencia = nuevaCantidad - cantidadActualPoliza;
+
+            // Si la diferencia es positiva, significa que estamos tomando MÁS artículos,
+            // así que debemos verificar si hay stock suficiente para esa diferencia.
+            if (diferencia > 0 && inventarioDeArticulo.getCantidad() < diferencia) {
+                throw new RuntimeException("Inventario insuficiente para ajustar la cantidad. Stock actual: "
+                        + inventarioDeArticulo.getCantidad() + ", se necesitan " + diferencia + " adicionales.");
+            }
+
+            // Ajustamos el inventario. Si la diferencia es 2, restamos 2 del stock.
+            // Si la diferencia es -2 (porque la póliza disminuyó), restamos -2 (lo que
+            // equivale a sumar 2).
+            inventarioDeArticulo.setCantidad(inventarioDeArticulo.getCantidad() - diferencia);
+        }
+
+        // Actualizamos los datos de la póliza existente.
+        polizaExistente.setEmpleado(nuevoEmpleado);
+        polizaExistente.setInventario(nuevoInventarioArticulo);
+        polizaExistente.setCantidad(nuevaCantidad);
+
+        // Guradamos cambios
+        return polizaRepository.save(polizaExistente);
+    }
+
 }
