@@ -3,6 +3,7 @@ package com.coppel.controllers;
 import com.coppel.dto.ApiResponseDTO;
 import com.coppel.dto.PolizaRequestDTO;
 import com.coppel.dto.PolizaResponseDTO;
+import com.coppel.dto.PolizaUpdateRequestDTO;
 import com.coppel.entities.Poliza;
 import com.coppel.services.PolizaService;
 import com.coppel.util.Meta;
@@ -38,6 +39,7 @@ public class PolizaController {
         meta.setStatus("OK");
         meta.setStatusCode(HttpStatus.CREATED.value()); // 201 CREATED
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
+
         return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }
 
@@ -53,6 +55,7 @@ public class PolizaController {
         meta.setStatus("OK");
         meta.setStatusCode(HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTOs);
+
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
 
     }
@@ -62,10 +65,12 @@ public class PolizaController {
         Poliza polizaPorId = polizaService.getById(id);
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaPorId, PolizaResponseDTO.class);
+
         Meta meta = new Meta();
         meta.setStatus("OK");
         meta.setStatusCode(HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
+
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
     }
 
@@ -74,6 +79,21 @@ public class PolizaController {
         Poliza polizaAEliminar = polizaService.eliminarPoliza(id);
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaAEliminar, PolizaResponseDTO.class);
+
+        Meta meta = new Meta();
+        meta.setStatus("OK");
+        meta.setStatusCode(HttpStatus.OK.value());
+        ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
+
+        return ResponseEntity.ok(respuesta);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponseDTO> updatePoliza(@PathVariable Integer id,
+            @RequestBody PolizaUpdateRequestDTO requestDTO) {
+        Poliza polizaActualizada = polizaService.actualizarPoliza(id, requestDTO);
+
+        PolizaResponseDTO polizaDTO = modelMapper.map(polizaActualizada, PolizaResponseDTO.class);
 
         Meta meta = new Meta();
         meta.setStatus("OK");
