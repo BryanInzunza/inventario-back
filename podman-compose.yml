@@ -7,7 +7,7 @@ services:
         image: mcr.microsoft.com/mssql/server:2022-latest
         container_name: coppel_sql_server
         hostname: sqlserver
-        restart: always
+        restart: unless-stopped
         environment:
             # Aceptación de la Licencia
             - ACCEPT_EULA=Y

@@ -23,21 +23,21 @@ public class Poliza {
 
     @Id // Llave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "IdPolizas")
+    @Column(name = "id_poliza")
     private Integer idPoliza;
 
     @ManyToOne
-    @JoinColumn(name = "EmpleadoGenero", referencedColumnName = "IdEmpleado", nullable = false)
+    @JoinColumn(name = "empleado_genero", referencedColumnName = "id_empleado", nullable = false)
     private Empleado empleado;
 
     @ManyToOne
-    @JoinColumn(name = "SKU", referencedColumnName = "SKU", nullable = false)
+    @JoinColumn(name = "sku", referencedColumnName = "SKU", nullable = false)
     private Inventario inventario;
 
-    @Column(name = "Cantidad", nullable = false)
+    @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
-    @Column(name = "Fecha", nullable = false)
+    @Column(name = "fecha", nullable = false)
     private LocalDateTime fecha; // Mapea a DATETIME en SQL Server
 
 }

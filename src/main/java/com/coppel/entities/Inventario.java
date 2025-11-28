@@ -16,13 +16,13 @@ import lombok.NoArgsConstructor;
 public class Inventario {
 
     @Id
-    @Column(name = "SKU")
+    @Column(name = "sku")
     private String sku;
 
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "Cantidad", nullable = false)
+    @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
 }

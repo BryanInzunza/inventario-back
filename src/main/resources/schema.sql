@@ -1,39 +1,37 @@
 -- Creación de Base de Datos
---CREATE DATABASE InventarioCoppel;
---GO
+CREATE DATABASE InventarioCoppel;
+GO
 
---USE InventarioCoppel;
---GO
+-- Seleccionar la base de datos para usarla
+USE InventarioCoppel;
+GO
 
 -- Tabla: Inventario
--- Restricción: No puede existir 2 registros con el mismo SKU (UNIQUE)
 CREATE TABLE Inventario (
-    SKU VARCHAR(50) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Cantidad INT NOT NULL CHECK (Cantidad >= 0) -- Validación extra: no negativos
+    sku VARCHAR(50) PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad >= 0)
 );
 GO
 
--- Tabla: Empleado
--- Restricción: No puede existir 2 empleados con el mismo ID (PK)
+-- Tabla: Empleado (id_empleado NO es autoincremental para permitir inserción manual en pruebas)
 CREATE TABLE Empleado (
-    IdEmpleado INT IDENTITY(1,1) PRIMARY KEY,
-    Nombre VARCHAR(100) NOT NULL,
-    Apellido VARCHAR(100) NOT NULL,
-    Puesto VARCHAR(50) NOT NULL
+    id_empleado INT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    puesto VARCHAR(50) NOT NULL
 );
 GO
 
 -- Tabla: Polizas
--- Restricción: Relaciones foráneas y ID único
 CREATE TABLE Polizas (
-    IdPolizas INT IDENTITY(1,1) PRIMARY KEY,
-    EmpleadoGenero INT NOT NULL,
-    SKU VARCHAR(50) NOT NULL,
-    Cantidad INT NOT NULL CHECK (Cantidad > 0),
-    Fecha DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_Poliza_Empleado FOREIGN KEY (EmpleadoGenero) REFERENCES Empleado(IdEmpleado),
-    CONSTRAINT FK_Poliza_Inventario FOREIGN KEY (SKU) REFERENCES Inventario(SKU)
+    id_poliza INT IDENTITY(1,1) PRIMARY KEY,
+    empleado_genero INT NOT NULL,
+    sku VARCHAR(50) NOT NULL,
+    cantidad INT NOT NULL CHECK (cantidad > 0),
+    fecha DATETIME DEFAULT GETDATE(),
+    CONSTRAINT FK_Poliza_Empleado FOREIGN KEY (empleado_genero) REFERENCES Empleado(id_empleado),
+    CONSTRAINT FK_Poliza_Inventario FOREIGN KEY (sku) REFERENCES Inventario(SKU)
 );
 GO
 

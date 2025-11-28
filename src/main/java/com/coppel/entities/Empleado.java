@@ -15,16 +15,16 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor 
 public class Empleado {
 
-    @Id 
-    @Column(name = "IdEmpleado") 
+    @Id
+    @Column(name = "id_empleado")
     private Integer idEmpleado;
 
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false)
+    @Column(name = "apellido", nullable = false)
     private String apellido;
 
-    @Column(name = "Puesto")
+    @Column(name = "puesto")
     private String puesto;
 }
