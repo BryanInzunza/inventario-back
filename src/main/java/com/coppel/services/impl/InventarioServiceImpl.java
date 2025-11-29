@@ -4,9 +4,12 @@ import com.coppel.entities.Inventario;
 import com.coppel.repositories.InventarioRepository;
 import com.coppel.services.InventarioService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
+
+import com.coppel.execeptions.ResourceNotFoundException;
+import com.coppel.execeptions.ResourceAlreadyExistsException;
 
 @Service
 public class InventarioServiceImpl implements InventarioService {
@@ -23,20 +26,27 @@ public class InventarioServiceImpl implements InventarioService {
     }
 
     @Override
-    public Optional<Inventario> findBySku(String sku) {
-        return inventarioRepository.findById(sku);
+    public Inventario findBySku(String sku) {
+        return inventarioRepository.findById(sku)
+                .orElseThrow(() -> new ResourceNotFoundException("Articulo no encontrado con SKU: " + sku));
     }
 
     @Override
     public Inventario save(Inventario inventario) {
+        // Validar que el artículo no exista previamente
+        if (inventario.getSku() != null && inventarioRepository.existsById(inventario.getSku())) {
+            throw new ResourceAlreadyExistsException(
+                    "El artículo con SKU " + inventario.getSku() + " ya existe. Use PUT para actualizar.");
+        }
         return inventarioRepository.save(inventario);
     }
 
     @Override
+    @Transactional
     public Inventario update(String sku, Inventario inventarioDetails) {
         // 1. Verificar si el inventario existe
         Inventario inventarioExistente = inventarioRepository.findById(sku)
-                .orElseThrow(() -> new RuntimeException("Inventario no encontrado con SKU: " + sku));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventario no encontrado con SKU: " + sku));
 
         // 2. Actualizar los campos necesarios
         inventarioExistente.setNombre(inventarioDetails.getNombre());
@@ -47,10 +57,11 @@ public class InventarioServiceImpl implements InventarioService {
     }
 
     @Override
+    @Transactional
     public Inventario deleteBySku(String sku) {
         // 1. Verificar si el inventario existe antes de eliminar
         Inventario inventarioExistente = inventarioRepository.findById(sku)
-                .orElseThrow(() -> new RuntimeException("Inventario no encontrado con SKU: " + sku));
+                .orElseThrow(() -> new ResourceNotFoundException("Inventario no encontrado con SKU: " + sku));
         inventarioRepository.delete(inventarioExistente);
         return inventarioExistente;
     }

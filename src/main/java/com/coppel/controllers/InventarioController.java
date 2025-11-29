@@ -42,8 +42,7 @@ public class InventarioController {
 
     @GetMapping("/{sku}")
     public ResponseEntity<ApiResponseDTO> getInventarioBySku(@PathVariable String sku) {
-        Inventario inventarioPorSku = inventarioService.findBySku(sku)
-                .orElseThrow(() -> new RuntimeException("Articulo no encontrado con SKU: " + sku));
+        Inventario inventarioPorSku = inventarioService.findBySku(sku);
 
         InventarioResponseDTO inventarioDTO = modelMapper.map(inventarioPorSku, InventarioResponseDTO.class);
         Meta meta = new Meta();
