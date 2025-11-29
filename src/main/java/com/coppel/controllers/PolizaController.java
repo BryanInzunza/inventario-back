@@ -35,9 +35,7 @@ public class PolizaController {
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaAGuardar, PolizaResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.CREATED.value()); // 201 CREATED
+        Meta meta = new Meta("OK", HttpStatus.CREATED.value()); // 201 CREATED
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
 
         return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
@@ -51,9 +49,7 @@ public class PolizaController {
                 .map(poliza -> modelMapper.map(poliza, PolizaResponseDTO.class))
                 .collect(Collectors.toList());
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTOs);
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
@@ -66,9 +62,7 @@ public class PolizaController {
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaPorId, PolizaResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
 
         return new ResponseEntity<>(respuesta, HttpStatus.OK);
@@ -80,9 +74,7 @@ public class PolizaController {
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaAEliminar, PolizaResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
 
         return ResponseEntity.ok(respuesta);
@@ -95,9 +87,7 @@ public class PolizaController {
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaActualizada, PolizaResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO respuesta = new ApiResponseDTO(meta, polizaDTO);
 
         return ResponseEntity.ok(respuesta);

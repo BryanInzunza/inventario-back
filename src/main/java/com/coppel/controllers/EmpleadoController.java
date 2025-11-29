@@ -33,9 +33,7 @@ public class EmpleadoController {
                 .map(empleado -> modelMapper.map(empleado, EmpleadoResponseDTO.class))
                 .collect(Collectors.toList());
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, empleadoDTOs);
         return ResponseEntity.ok(response);
     }
@@ -45,9 +43,7 @@ public class EmpleadoController {
         Empleado empleado = empleadoService.findById(id);
 
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(empleado, EmpleadoResponseDTO.class);
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, empleadoDTO);
         return ResponseEntity.ok(response);
     }
@@ -58,9 +54,7 @@ public class EmpleadoController {
         Empleado nuevoEmpleado = empleadoService.save(empleado);
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(nuevoEmpleado, EmpleadoResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.CREATED.value());
+        Meta meta = new Meta("OK", HttpStatus.CREATED.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, empleadoDTO);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -72,9 +66,7 @@ public class EmpleadoController {
         Empleado empleadoActualizado = empleadoService.update(id, empleadoDetails);
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(empleadoActualizado, EmpleadoResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, empleadoDTO);
         return ResponseEntity.ok(response);
     }
@@ -84,9 +76,7 @@ public class EmpleadoController {
         Empleado empleadoAEliminar = empleadoService.deleteById(id);
 
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(empleadoAEliminar, EmpleadoResponseDTO.class);
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, empleadoDTO);
         return ResponseEntity.ok(response);
     }

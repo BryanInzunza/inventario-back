@@ -33,9 +33,7 @@ public class InventarioController {
                 .map(inventario -> modelMapper.map(inventario, InventarioResponseDTO.class))
                 .collect(Collectors.toList());
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, inventarioDTOs);
         return ResponseEntity.ok(response);
     }
@@ -45,9 +43,7 @@ public class InventarioController {
         Inventario inventarioPorSku = inventarioService.findBySku(sku);
 
         InventarioResponseDTO inventarioDTO = modelMapper.map(inventarioPorSku, InventarioResponseDTO.class);
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, inventarioDTO);
         return ResponseEntity.ok(response);
     }
@@ -60,9 +56,7 @@ public class InventarioController {
 
         // Mapeamos lo que guardamos en BD para devolver al usuario
         InventarioResponseDTO inventarioDTO = modelMapper.map(nuevoInventario, InventarioResponseDTO.class);
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.CREATED.value());
+        Meta meta = new Meta("OK", HttpStatus.CREATED.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, inventarioDTO);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -75,9 +69,7 @@ public class InventarioController {
         Inventario inventarioConActualizacion = inventarioService.update(sku, inventarioParaActualizar);
 
         InventarioResponseDTO inventarioDTO = modelMapper.map(inventarioConActualizacion, InventarioResponseDTO.class);
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, inventarioDTO);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -89,9 +81,7 @@ public class InventarioController {
 
         InventarioResponseDTO inventarioDTO = modelMapper.map(inventarioAEliminar, InventarioResponseDTO.class);
 
-        Meta meta = new Meta();
-        meta.setStatus("OK");
-        meta.setStatusCode(HttpStatus.OK.value());
+        Meta meta = new Meta("OK", HttpStatus.OK.value());
         ApiResponseDTO response = new ApiResponseDTO(meta, inventarioDTO);
 
         return ResponseEntity.ok(response);
