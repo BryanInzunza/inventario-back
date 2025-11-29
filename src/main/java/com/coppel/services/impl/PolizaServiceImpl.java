@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.coppel.execeptions.ResourceNotFoundException;
+
 @Service
 public class PolizaServiceImpl implements PolizaService {
 
@@ -33,18 +35,18 @@ public class PolizaServiceImpl implements PolizaService {
     @Transactional
     public Poliza generarPoliza(PolizaRequestDTO polizaRequest) {
         Empleado empleado = empleadoRepository.findById(polizaRequest.getIdEmpleado())
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Empleado no encontrado"));
 
         Inventario inventario = inventarioRepository.findById(polizaRequest.getSku())
-                .orElseThrow(() -> new RuntimeException("Artículo de inventario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artículo de inventario no encontrado"));
 
         // Cantidad en poliza mayor a 0
         if (polizaRequest.getCantidad() <= 0) {
-            throw new RuntimeException("La cantidad en la póliza debe ser mayor a cero");
+            throw new ResourceNotFoundException("La cantidad en la póliza debe ser mayor a cero");
         }
 
         if (inventario.getCantidad() < polizaRequest.getCantidad()) {
-            throw new RuntimeException("Inventario insuficiente para el artículo: " + inventario.getNombre());
+            throw new ResourceNotFoundException("Inventario insuficiente para el artículo: " + inventario.getNombre());
         }
 
         // Quitamos cantidad de inventario
@@ -64,7 +66,7 @@ public class PolizaServiceImpl implements PolizaService {
     @Transactional // Inicia Transaccion
     public Poliza eliminarPoliza(Integer idPoliza) {
         Poliza poliza = polizaRepository.findById(idPoliza)
-                .orElseThrow(() -> new RuntimeException("Póliza no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Póliza no encontrada"));
 
         Inventario inventario = poliza.getInventario();
 
@@ -81,7 +83,7 @@ public class PolizaServiceImpl implements PolizaService {
     @Override
     public Poliza getById(Integer idPoliza) {
         return polizaRepository.findById(idPoliza)
-                .orElseThrow(() -> new RuntimeException("Póliza no econtrada con ID: " + idPoliza));
+                .orElseThrow(() -> new ResourceNotFoundException("Póliza no econtrada con ID: " + idPoliza));
     }
 
     @Override
@@ -94,7 +96,7 @@ public class PolizaServiceImpl implements PolizaService {
 
         // Encontrar la póliza existente
         Poliza polizaExistente = polizaRepository.findById(idPoliza)
-                .orElseThrow(() -> new RuntimeException("Poliza no encontrada con el ID: " + idPoliza));
+                .orElseThrow(() -> new ResourceNotFoundException("Poliza no encontrada con el ID: " + idPoliza));
 
         // Guardar los datos originales para la lógica de inventario.
         Inventario inventarioDeArticulo = polizaExistente.getInventario(); // Guardar inventario actual
@@ -106,17 +108,18 @@ public class PolizaServiceImpl implements PolizaService {
         // Validar empleado de peticion
         Empleado nuevoEmpleado = empleadoRepository.findById(polizaRequest.getIdEmpleado())
                 .orElseThrow(
-                        () -> new RuntimeException("Empleado no encontrado con ID: " + polizaRequest.getIdEmpleado()));
+                        () -> new ResourceNotFoundException(
+                                "Empleado no encontrado con ID: " + polizaRequest.getIdEmpleado()));
 
         // Validar articulo de peticion
         Inventario nuevoInventarioArticulo = inventarioRepository.findById(polizaRequest.getSku())
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "Artículo de inventario no encontrado con SKU: " + polizaRequest.getSku()));
 
         // Validar cantidad de peticion
         int nuevaCantidad = polizaRequest.getCantidad();
         if (nuevaCantidad <= 0) {
-            throw new RuntimeException("La cantidad en la póliza debe ser mayor a cero");
+            throw new ResourceNotFoundException("La cantidad en la póliza debe ser mayor a cero");
         }
 
         // Lógica de ajuste de
@@ -130,7 +133,7 @@ public class PolizaServiceImpl implements PolizaService {
             inventarioDeArticulo.setCantidad(inventarioDeArticulo.getCantidad() + cantidadActualPoliza);
 
             if (nuevoInventarioArticulo.getCantidad() < nuevaCantidad) {
-                throw new RuntimeException(
+                throw new ResourceNotFoundException(
                         "Inventario insuficiente para el nuevo artículo: " + nuevoInventarioArticulo.getNombre());
             }
             nuevoInventarioArticulo.setCantidad(nuevoInventarioArticulo.getCantidad() - nuevaCantidad);
@@ -141,7 +144,7 @@ public class PolizaServiceImpl implements PolizaService {
             // Si la diferencia es positiva, significa que estamos tomando MÁS artículos,
             // así que debemos verificar si hay stock suficiente para esa diferencia.
             if (diferencia > 0 && inventarioDeArticulo.getCantidad() < diferencia) {
-                throw new RuntimeException("Inventario insuficiente para ajustar la cantidad. Stock actual: "
+                throw new ResourceNotFoundException("Inventario insuficiente para ajustar la cantidad. Stock actual: "
                         + inventarioDeArticulo.getCantidad() + ", se necesitan " + diferencia + " adicionales.");
             }
 
