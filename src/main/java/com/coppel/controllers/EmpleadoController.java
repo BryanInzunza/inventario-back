@@ -42,8 +42,7 @@ public class EmpleadoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDTO> getEmpleadoById(@PathVariable Integer id) {
-        Empleado empleado = empleadoService.findById(id)
-                .orElseThrow(() -> new RuntimeException("Empleado no encontrado con ID: " + id));
+        Empleado empleado = empleadoService.findById(id);
 
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(empleado, EmpleadoResponseDTO.class);
         Meta meta = new Meta();
