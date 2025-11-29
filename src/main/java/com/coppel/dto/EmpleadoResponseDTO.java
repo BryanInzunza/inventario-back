@@ -1,11 +1,19 @@
 package com.coppel.dto;
 
-   import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-   @Data
-   public class EmpleadoResponseDTO {
-       private Integer idEmpleado;
-       private String nombre;
-       private String apellido;
-       private String puesto;
-   }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class EmpleadoResponseDTO {
+
+    private Integer idEmpleado;
+
+    private String nombre;
+
+    private String apellido;
+
+    private String puesto;
+}

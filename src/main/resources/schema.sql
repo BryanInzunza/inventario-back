@@ -16,7 +16,7 @@ GO
 
 -- Tabla: Empleado (id_empleado NO es autoincremental para permitir inserción manual en pruebas)
 CREATE TABLE Empleado (
-    id_empleado INT PRIMARY KEY,
+    id_empleado INT IDENTITY(1,1) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     puesto VARCHAR(50) NOT NULL

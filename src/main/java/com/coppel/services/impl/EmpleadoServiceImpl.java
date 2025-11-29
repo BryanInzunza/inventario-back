@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import com.coppel.execeptions.ResourceNotFoundException;
-import com.coppel.execeptions.ResourceAlreadyExistsException;
 
 @Service // Marca esta clase como un Servicio
 public class EmpleadoServiceImpl implements EmpleadoService {
@@ -33,11 +32,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
     @Override
     public Empleado save(Empleado empleado) {
-        // Validar que el empleado no exista previamente
-        if (empleado.getIdEmpleado() != null && empleadoRepository.existsById(empleado.getIdEmpleado())) {
-            throw new ResourceAlreadyExistsException(
-                    "El empleado con ID " + empleado.getIdEmpleado() + " ya existe. Use PUT para actualizar.");
-        }
+        // La BD garantiza unicidad con IDENTITY
         return empleadoRepository.save(empleado);
     }
 
