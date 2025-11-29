@@ -1,7 +1,5 @@
 package com.coppel.execeptions;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -17,9 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.coppel.dto.ApiResponseDTO;
 import com.coppel.util.Meta;
 
-/**
- * Clase para manejo de excepciones no controladas.
- */
 @ControllerAdvice
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -29,39 +24,34 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
         log.warn("Excepción de cliente capturada ({}): {}", ex.getStatusCode(), ex.getReason());
 
-        Meta meta = new Meta();
-        meta.setDevMessage(null);
-        meta.setStatus("CLIENT_ERROR");
-        meta.setStatusCode(ex.getStatusCode().value());
-        meta.setMessage(ex.getReason());
-        meta.setTimestamp(LocalDateTime.now().toString());
+        Meta meta = new Meta(
+                "CLIENT_ERROR",
+                ex.getStatusCode().value(),
+                ex.getReason(),
+                null);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
         return new ResponseEntity<>(apiResponse, httpHeaders, ex.getStatusCode());
     }
 
-    /**
-     * Cualquier excepción que no sea atendida será tratada en este método.
-     * 
-     * @param runtimeException
-     * @param webRequest
-     * @return ResponseEntity<Object>
-     */
     @ExceptionHandler(value = { Exception.class, RuntimeException.class })
     protected ResponseEntity<Object> handleGenericException(RuntimeException runtimeException, WebRequest webRequest) {
         log.error("Excepción interna no controlada: ", runtimeException);
 
-        Meta meta = new Meta();
-        meta.setStatus("ERROR_SERVIDOR");
-        meta.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
-        meta.setDevMessage(
-                runtimeException.getMessage() == null ? runtimeException.getClass().toString()
-                        : runtimeException.getMessage());
-        meta.setTimestamp(LocalDateTime.now().toString());
+        String errorMessage = runtimeException.getMessage() == null
+                ? runtimeException.getClass().toString()
+                : runtimeException.getMessage();
+
+        Meta meta = new Meta(
+                "SERVER_ERROR",
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "Error interno del servidor",
+                errorMessage);
         ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+
         return handleExceptionInternal(
                 runtimeException,
                 apiResponse,
@@ -72,33 +62,29 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFoundException(ResourceNotFoundException ex) {
-        log.warn("Excepción de recurso no encontrado capturada: {}", ex.getMessage());
+        log.warn("Recurso no encontrado: {}", ex.getMessage());
 
-        Meta meta = new Meta();
-        meta.setDevMessage(ex.getMessage());
-        meta.setStatus("NOT_FOUND");
-        meta.setStatusCode(HttpStatus.NOT_FOUND.value()); // Código 404 Not Found
-        meta.setMessage(ex.getMessage());
-        meta.setTimestamp(LocalDateTime.now().toString());
-
+        Meta meta = new Meta(
+                "NOT_FOUND",
+                HttpStatus.NOT_FOUND.value(),
+                ex.getMessage(),
+                ex.getMessage());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-        ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null); // No hay datos en el cuerpo para un 404
+        ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
 
         return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<Object> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
-        log.warn("Excepción de recurso duplicado capturada: {}", ex.getMessage());
+        log.warn("Recurso duplicado: {}", ex.getMessage());
 
-        Meta meta = new Meta();
-        meta.setDevMessage(ex.getMessage());
-        meta.setStatus("CONFLICT");
-        meta.setStatusCode(HttpStatus.CONFLICT.value()); // Código 409 Conflict
-        meta.setMessage(ex.getMessage());
-        meta.setTimestamp(LocalDateTime.now().toString());
-
+        Meta meta = new Meta(
+                "CONFLICT",
+                HttpStatus.CONFLICT.value(),
+                ex.getMessage(),
+                ex.getMessage());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
