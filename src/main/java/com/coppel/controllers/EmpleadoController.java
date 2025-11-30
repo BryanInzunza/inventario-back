@@ -63,8 +63,8 @@ public class EmpleadoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> updateEmpleado(@Valid @PathVariable Integer id,
-            @RequestBody EmpleadoRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO> updateEmpleado(@PathVariable Integer id,
+            @Valid @RequestBody EmpleadoRequestDTO requestDTO) {
         Empleado empleadoDetails = modelMapper.map(requestDTO, Empleado.class);
         Empleado empleadoActualizado = empleadoService.update(id, empleadoDetails);
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(empleadoActualizado, EmpleadoResponseDTO.class);

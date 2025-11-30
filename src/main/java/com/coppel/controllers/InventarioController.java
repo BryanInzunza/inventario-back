@@ -3,6 +3,7 @@ package com.coppel.controllers;
 import com.coppel.dto.ApiResponseDTO;
 import com.coppel.dto.InventarioRequestDTO;
 import com.coppel.dto.InventarioResponseDTO;
+import com.coppel.dto.InventarioUpdateRequestDTO;
 import com.coppel.entities.Inventario;
 import com.coppel.services.InventarioService;
 import com.coppel.util.Meta;
@@ -66,9 +67,11 @@ public class InventarioController {
     }
 
     @PutMapping("/{sku}")
-    public ResponseEntity<ApiResponseDTO> updateInventario(@Valid @PathVariable String sku,
-            @RequestBody InventarioRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO> updateInventario(@PathVariable String sku,
+            @Valid @RequestBody InventarioUpdateRequestDTO requestDTO) {
         Inventario inventarioParaActualizar = modelMapper.map(requestDTO, Inventario.class);
+        inventarioParaActualizar.setSku(sku);
+
         Inventario inventarioConActualizacion = inventarioService.update(sku, inventarioParaActualizar);
 
         InventarioResponseDTO inventarioDTO = modelMapper.map(inventarioConActualizacion, InventarioResponseDTO.class);
