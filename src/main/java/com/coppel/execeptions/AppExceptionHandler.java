@@ -94,9 +94,12 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex) {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            org.springframework.http.HttpStatusCode statusCode,
+            WebRequest request) {
         log.warn("Error de validación en request: {}", ex.getBindingResult().getFieldError());
 
         StringBuilder errorMessage = new StringBuilder();
@@ -109,7 +112,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
         Meta meta = new Meta(
                 "BAD_REQUEST",
-                HttpStatus.BAD_REQUEST.value(),
+                statusCode.value(),
                 "Validación de datos fallida",
                 errorMessage.toString());
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -118,4 +121,5 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.BAD_REQUEST);
     }
+
 }
