@@ -6,6 +6,9 @@ import com.coppel.dto.EmpleadoResponseDTO;
 import com.coppel.entities.Empleado;
 import com.coppel.services.EmpleadoService;
 import com.coppel.util.Meta;
+
+import jakarta.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +52,7 @@ public class EmpleadoController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDTO> createEmpleado(@RequestBody EmpleadoRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO> createEmpleado(@Valid @RequestBody EmpleadoRequestDTO requestDTO) {
         Empleado empleado = modelMapper.map(requestDTO, Empleado.class);
         Empleado nuevoEmpleado = empleadoService.save(empleado);
         EmpleadoResponseDTO empleadoDTO = modelMapper.map(nuevoEmpleado, EmpleadoResponseDTO.class);
@@ -60,7 +63,7 @@ public class EmpleadoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> updateEmpleado(@PathVariable Integer id,
+    public ResponseEntity<ApiResponseDTO> updateEmpleado(@Valid @PathVariable Integer id,
             @RequestBody EmpleadoRequestDTO requestDTO) {
         Empleado empleadoDetails = modelMapper.map(requestDTO, Empleado.class);
         Empleado empleadoActualizado = empleadoService.update(id, empleadoDetails);

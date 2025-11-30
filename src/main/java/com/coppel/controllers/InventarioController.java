@@ -6,6 +6,9 @@ import com.coppel.dto.InventarioResponseDTO;
 import com.coppel.entities.Inventario;
 import com.coppel.services.InventarioService;
 import com.coppel.util.Meta;
+
+import jakarta.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +52,7 @@ public class InventarioController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDTO> createInventario(@RequestBody InventarioRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO> createInventario(@Valid @RequestBody InventarioRequestDTO requestDTO) {
         // Convertimos lo que llega por body a una entidad Inventario
         Inventario inventarioACrear = modelMapper.map(requestDTO, Inventario.class);
         Inventario nuevoInventario = inventarioService.save(inventarioACrear);
@@ -63,7 +66,7 @@ public class InventarioController {
     }
 
     @PutMapping("/{sku}")
-    public ResponseEntity<ApiResponseDTO> updateInventario(@PathVariable String sku,
+    public ResponseEntity<ApiResponseDTO> updateInventario(@Valid @PathVariable String sku,
             @RequestBody InventarioRequestDTO requestDTO) {
         Inventario inventarioParaActualizar = modelMapper.map(requestDTO, Inventario.class);
         Inventario inventarioConActualizacion = inventarioService.update(sku, inventarioParaActualizar);

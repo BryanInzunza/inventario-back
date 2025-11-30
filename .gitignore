@@ -43,3 +43,6 @@ build/
 .mvn/
 
 test-inventario-api.http
+test-empleados.http
+test-inventario.http
+test-polizas.http

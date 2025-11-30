@@ -6,6 +6,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -20,7 +22,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(AppExceptionHandler.class);
 
-    @ExceptionHandler(value = { ResponseStatusException.class })
+    @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException ex) {
         log.warn("Excepción de cliente capturada ({}): {}", ex.getStatusCode(), ex.getReason());
 
@@ -90,5 +92,30 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
 
         return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex) {
+        log.warn("Error de validación en request: {}", ex.getBindingResult().getFieldError());
+
+        StringBuilder errorMessage = new StringBuilder();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errorMessage.append(error.getField())
+                    .append(": ")
+                    .append(error.getDefaultMessage())
+                    .append("; ");
+        }
+
+        Meta meta = new Meta(
+                "BAD_REQUEST",
+                HttpStatus.BAD_REQUEST.value(),
+                "Validación de datos fallida",
+                errorMessage.toString());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
+        ApiResponseDTO apiResponse = new ApiResponseDTO(meta, null);
+
+        return new ResponseEntity<>(apiResponse, httpHeaders, HttpStatus.BAD_REQUEST);
     }
 }

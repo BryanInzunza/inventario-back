@@ -7,6 +7,9 @@ import com.coppel.dto.PolizaUpdateRequestDTO;
 import com.coppel.entities.Poliza;
 import com.coppel.services.PolizaService;
 import com.coppel.util.Meta;
+
+import jakarta.validation.Valid;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +31,7 @@ public class PolizaController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponseDTO> generarPoliza(@RequestBody PolizaRequestDTO requestDTO) {
+    public ResponseEntity<ApiResponseDTO> generarPoliza(@Valid @RequestBody PolizaRequestDTO requestDTO) {
 
         // Poliza nuevaPoliza = modelMapper.map(requestDTO, Poliza.class);
         Poliza polizaAGuardar = polizaService.generarPoliza(requestDTO);
@@ -81,7 +84,7 @@ public class PolizaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> updatePoliza(@PathVariable Integer id,
+    public ResponseEntity<ApiResponseDTO> updatePoliza(@Valid @PathVariable Integer id,
             @RequestBody PolizaUpdateRequestDTO requestDTO) {
         Poliza polizaActualizada = polizaService.actualizarPoliza(id, requestDTO);
 
