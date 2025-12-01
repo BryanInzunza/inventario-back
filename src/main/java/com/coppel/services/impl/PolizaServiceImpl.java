@@ -92,6 +92,7 @@ public class PolizaServiceImpl implements PolizaService {
     }
 
     @Override
+    @Transactional
     public Poliza actualizarPoliza(Integer idPoliza, PolizaUpdateRequestDTO polizaRequest) {
 
         // Encontrar la póliza existente
@@ -102,14 +103,15 @@ public class PolizaServiceImpl implements PolizaService {
         Inventario inventarioDeArticulo = polizaExistente.getInventario(); // Guardar inventario actual
         int cantidadActualPoliza = polizaExistente.getCantidad(); // Guardar cantidad actual de poliza
 
-        // Validar los nuevos datos que llegan en la
-        // petición-------------------------------------------
+        // Validar los nuevos datos que llegan en petición -----
 
-        // Validar empleado de peticion
-        Empleado nuevoEmpleado = empleadoRepository.findById(polizaRequest.getIdEmpleado())
-                .orElseThrow(
-                        () -> new ResourceNotFoundException(
-                                "Empleado no encontrado con ID: " + polizaRequest.getIdEmpleado()));
+        // Validar empleado SOLO si viene en la petición
+        Empleado nuevoEmpleado = polizaExistente.getEmpleado();
+        if (polizaRequest.getIdEmpleado() != null) {
+            nuevoEmpleado = empleadoRepository.findById(polizaRequest.getIdEmpleado())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Empleado no encontrado con ID: " + polizaRequest.getIdEmpleado()));
+        }
 
         // Validar articulo de peticion
         Inventario nuevoInventarioArticulo = inventarioRepository.findById(polizaRequest.getSku())
@@ -131,12 +133,14 @@ public class PolizaServiceImpl implements PolizaService {
             // Si el artículo cambia regresamos la cantidad actual de la poliza a inventario
             // del articulo
             inventarioDeArticulo.setCantidad(inventarioDeArticulo.getCantidad() + cantidadActualPoliza);
+            inventarioRepository.save(inventarioDeArticulo);
 
             if (nuevoInventarioArticulo.getCantidad() < nuevaCantidad) {
                 throw new ResourceNotFoundException(
                         "Inventario insuficiente para el nuevo artículo: " + nuevoInventarioArticulo.getNombre());
             }
             nuevoInventarioArticulo.setCantidad(nuevoInventarioArticulo.getCantidad() - nuevaCantidad);
+            inventarioRepository.save(nuevoInventarioArticulo);
 
         } else { // Si el SKU es el mismo, solo cambia la cantidad o el empleado.
             int diferencia = nuevaCantidad - cantidadActualPoliza;
@@ -152,6 +156,7 @@ public class PolizaServiceImpl implements PolizaService {
             // Si la diferencia es -2 (porque la póliza disminuyó), restamos -2 (lo que
             // equivale a sumar 2).
             inventarioDeArticulo.setCantidad(inventarioDeArticulo.getCantidad() - diferencia);
+            inventarioRepository.save(inventarioDeArticulo);
         }
 
         // Actualizamos los datos de la póliza existente.

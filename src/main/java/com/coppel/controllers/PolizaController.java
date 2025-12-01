@@ -84,8 +84,9 @@ public class PolizaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponseDTO> updatePoliza(@Valid @PathVariable Integer id,
+    public ResponseEntity<ApiResponseDTO> updatePoliza(@PathVariable Integer id,
             @Valid @RequestBody PolizaUpdateRequestDTO requestDTO) {
+
         Poliza polizaActualizada = polizaService.actualizarPoliza(id, requestDTO);
 
         PolizaResponseDTO polizaDTO = modelMapper.map(polizaActualizada, PolizaResponseDTO.class);
