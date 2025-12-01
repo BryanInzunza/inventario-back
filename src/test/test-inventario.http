@@ -1,0 +1,72 @@
+@baseUrl = http://localhost:8080/api/v1
+
+### 2.1 Crear Inventario #1 - Laptop
+POST {{baseUrl}}/inventario
+Content-Type: application/json
+
+{
+  "sku": "LAPTOP-DELL-001",
+  "nombre": "Laptop Dell XPS 13",
+  "cantidad": 50
+}
+
+### 2.2 Crear Inventario #2 - Monitor
+POST {{baseUrl}}/inventario
+Content-Type: application/json
+
+{
+  "sku": "MONITOR-LG-27",
+  "nombre": "Monitor LG 27 pulgadas",
+  "cantidad": 30
+}
+
+### 2.3 Crear Inventario #3 - Teclado
+POST {{baseUrl}}/inventario
+Content-Type: application/json
+
+{
+  "sku": "KEYBOARD-MECH-RGB",
+  "nombre": "Teclado Mecánico RGB",
+  "cantidad": 100
+}
+
+### 2.4 Crear Inventario #4 - Mouse
+POST {{baseUrl}}/inventario
+Content-Type: application/json
+
+{
+  "sku": "MOUSE-LOGITECH-MX",
+  "nombre": "Mouse Logitech MX Master",
+  "cantidad": 75
+}
+
+### 2.5 Obtener todos los artículos
+GET {{baseUrl}}/inventario
+
+### 2.6 Obtener Inventario por SKU
+GET {{baseUrl}}/inventario/LAPTOP-DELL-001
+
+### 2.7 Obtener SKU inexistente
+GET {{baseUrl}}/inventario/SKU-INEXISTENTE-999
+
+### 2.8 Actualizar Inventario - Reducir cantidad
+PUT {{baseUrl}}/inventario/LAPTOP-DELL-001
+Content-Type: application/json
+
+{
+  "nombre": "Laptop Dell XPS 13 Actualizada",
+  "cantidad": 40
+}
+
+### 2.9 Eliminar Inventario
+DELETE {{baseUrl}}/inventario/MOUSE-LOGITECH-MX
+
+### 2.10 Intentar crear Inventario duplicado
+POST {{baseUrl}}/inventario
+Content-Type: application/json
+
+{
+  "sku": "LAPTOP-DELL-001",
+  "nombre": "Otra Laptop Dell",
+  "cantidad": 20
+}

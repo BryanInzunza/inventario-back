@@ -1,0 +1,106 @@
+@baseUrl = http://localhost:8080/api/v1
+
+### 3.1 Generar Póliza - Empleado 1, Laptop (10 unidades)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 1,
+  "sku": "LAPTOP-DELL-001",
+  "cantidad": 1
+}
+
+### 3.2 Generar Póliza - Empleado 2, Monitor (5 unidades)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 2,
+  "sku": "MONITOR-LG-27",
+  "cantidad": 5
+}
+
+### 3.3 Generar Póliza - Empleado 1, Monitor (3 unidades)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 1,
+  "sku": "MONITOR-LG-27",
+  "cantidad": 3
+}
+
+### 3.4 Obtener todas las Pólizas
+GET {{baseUrl}}/polizas
+
+### 3.5 Obtener Póliza por ID
+GET {{baseUrl}}/polizas/1
+
+### 3.6 Obtener Póliza inexistente
+GET {{baseUrl}}/polizas/9999
+
+### 3.7 Actualizar Póliza - Mismo SKU, cambiar cantidad de 10 a 7 -NO SE REFLEJA EL REGRESO DE INVENTARIO
+PUT {{baseUrl}}/polizas/4
+Content-Type: application/json
+
+{
+  "idEmpleado": 1,
+  "sku": "LAPTOP-DELL-001",
+  "cantidad": 20
+}
+
+
+### 3.5 Obtener Póliza por ID
+GET {{baseUrl}}/polizas/4
+
+### 3.8 Actualizar Póliza - Cambiar SKU (de Laptop a Teclado)
+PUT {{baseUrl}}/polizas/4
+Content-Type: application/json
+
+{
+  "sku": "LAPTOP-DELL-001",
+  "cantidad": 5
+}
+
+### 3.9 Eliminar Póliza
+DELETE {{baseUrl}}/polizas/3
+
+### 3.10 Generar Póliza con Empleado inexistente (Error 404)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 9999,
+  "sku": "LAPTOP-DELL-001",
+  "cantidad": 5
+}
+
+### 3.11 Generar Póliza con SKU inexistente (Error 404)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 1,
+  "sku": "SKU-INEXISTENTE",
+  "cantidad": 5
+}
+
+### 3.12 Generar Póliza con cantidad mayor al stock (Error)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 5,
+  "sku": "LAPTOP-DELL-001",
+  "cantidad": 1000
+}
+
+### 3.13 Generar Póliza con cantidad = 0 (Error)
+POST {{baseUrl}}/polizas
+Content-Type: application/json
+
+{
+  "idEmpleado": 1,
+  "sku": "KEYBOARD-MECH-RGB",
+  "cantidad": 0
+}

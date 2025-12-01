@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="log-path" value="/sysx/progs/logs"/>
+    <property name="log-path" value="${LOG_PATH:-/app/logs}"/>
     <property name="filename" value="inventario-api"/>
 
     <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">

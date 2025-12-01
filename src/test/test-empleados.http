@@ -1,0 +1,62 @@
+@baseUrl = http://localhost:8080/api/v1
+
+### 1.1 Crear Empleado #1
+POST {{baseUrl}}/empleados
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "apellido": "Inzunza",
+  "puesto": "Líder Técnico"
+}
+
+### 1.2 Crear Empleado #2
+POST {{baseUrl}}/empleados
+Content-Type: application/json
+
+{
+  "nombre": "Andrea",
+  "apellido": "López",
+  "puesto": "Gerente de Inventario"
+}
+
+### 1.3 Crear Empleado #3
+POST {{baseUrl}}/empleados
+Content-Type: application/json
+
+{
+  "nombre": "Carlos",
+  "apellido": "Martínez",
+  "puesto": "Almacenista"
+}
+
+### 1.4 Obtener todos los Empleados
+GET {{baseUrl}}/empleados
+
+### 1.5 Obtener Empleado por ID (reemplaza {id} con el ID devuelto)
+GET {{baseUrl}}/empleados/1
+###
+GET {{baseUrl}}/empleados/2
+###
+GET {{baseUrl}}/empleados/3
+
+### 1.6 Obtener Empleado inexistente
+GET {{baseUrl}}/empleados/9999
+
+### 1.7 Actualizar Empleado (reemplaza {id} con el ID a actualizar)
+
+GET {{baseUrl}}/empleados/1
+###
+PUT {{baseUrl}}/empleados/1
+Content-Type: application/json
+
+{
+  "nombre": "JuanJo",
+  "apellido": "Coppel",
+  "puesto": "Gerente Sr"
+}
+
+### 1.8 Eliminar Empleado (reemplaza {id} con el ID a eliminar)
+DELETE {{baseUrl}}/empleados/3
+### Verificar Borrado
+GET {{baseUrl}}/empleados/3

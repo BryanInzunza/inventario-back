@@ -7,9 +7,9 @@ spring:
     application:
         name: inventario-api
     datasource:
-        url: jdbc:sqlserver://localhost:1433;databaseName=InventarioCoppel;encrypt=false;trustServerCertificate=true
-        username: sa
-        password: Coppel2024_Test!
+        url: jdbc:sqlserver://${DB_HOST:localhost}:${DB_PORT:1433};databaseName=${DB_NAME:InventarioCoppel};encrypt=false;trustServerCertificate=true
+        username: ${DB_USERNAME:sa}
+        password: ${DB_PASSWORD:Coppel2024_Test!}
         driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     jpa:
         hibernate:

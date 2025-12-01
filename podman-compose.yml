@@ -1,4 +1,8 @@
 # podman-compose.yml
+# Configuración completamente automática
+# Solo: podman-compose up -d
+# Y todo se inicializa solo
+
 version: "3.8"
 
 services:
@@ -9,18 +13,44 @@ services:
         hostname: sqlserver
         restart: unless-stopped
         environment:
-            # Aceptación de la Licencia
             - ACCEPT_EULA=Y
-            # Contraseña de usuario SA
             - SA_PASSWORD=Coppel2024_Test!
             - MSSQL_PID=Express
         ports:
-            # Mapeo del puerto SQL estándar
             - "1433:1433"
         volumes:
-            # Persistencia de datos en el sistema anfitrión
             - sql_data:/var/opt/mssql
+        networks:
+            - spring-net
+        healthcheck:
+            test: ["CMD", "/opt/mssql-tools/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Coppel2024_Test!", "-Q", "SELECT 1"]
+            interval: 5s
+            timeout: 3s
+            retries: 30
+            start_period: 10s
 
+    # API Rest - Inventario
+    inventario-api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: coppel_inventario_api
+        restart: on-failure:5
+        environment:
+            # Spring Boot datasource
+            - SPRING_DATASOURCE_URL=jdbc:sqlserver://sqlserver:1433;databaseName=InventarioCoppel;encrypt=false;trustServerCertificate=true
+            - SPRING_DATASOURCE_USERNAME=sa
+            - SPRING_DATASOURCE_PASSWORD=Coppel2024_Test!
+            - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.microsoft.sqlserver.jdbc.SQLServerDriver
+            # Logging
+            - LOG_PATH=/app/logs
+        ports:
+            - "8080:8080"
+        volumes:
+            - ./logs:/app/logs
+        depends_on:
+            sqlserver:
+                condition: service_healthy
         networks:
             - spring-net
 
